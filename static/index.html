@@ -58,6 +58,12 @@
         $("#deleteButton").click(function (event) {
             event.preventDefault();
             var short_url = $("#deleteTextField").val();
+            // Client-side validation
+            const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+            if (!short_url || !urlRegex.test(short_url)) {
+                $('#deleteUrlError').text('Please enter a valid URL.');
+                return; // Exit function if URL is empty
+            }
             $.ajax({
                 url: window.location.origin + '/shorten/',
                 type: 'DELETE',
