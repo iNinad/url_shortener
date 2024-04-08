@@ -20,53 +20,74 @@ This project utilizes MongoDB for the database and Memcache for caching.
 
 MongoDB is used as the primary database for storing original URLs and their shortened versions. This choice stems from its scalability, enabling horizontal scaling to accommodate potential growth effectively. With MongoDB's flexible data structure and adept handling of read-heavy operations, it efficiently manages URL mappings without necessitating intricate relationships. Furthermore, MongoDB's leader-follower protocol ensures data integrity by facilitating atomic write operations and offers high read throughput. These features align seamlessly with our service requirements, making MongoDB the optimal choice for our database solution.
 
-You can easily get a MongoDB Docker container by running the following command:
-
-```bash
-docker run -d --name mongodb-container -p 27017:27017 mongo
-```
-
-Ensure that Docker is installed and running before executing this command. This will pull the latest MongoDB image from Docker Hub and run it as a container with port `27017` exposed.
-
 ### Memcache
 
-Memcache is employed for caching to enhance performance, particularly during redirection requests. You can obtain a Memcache Docker container by running the following command:
-
-```bash
-docker run -d --name memcached-container -p 11211:11211 memcached
-```
-
-Again, ensure that Docker is installed and running before executing this command. This will pull the latest Memcache image from Docker Hub and run it as a container with port `11211` exposed.
-
+Memcache is employed for caching to enhance performance, particularly during redirection requests. 
 When a redirection request occurs, the application first checks Memcache for the corresponding original URL to expedite the process and improve overall performance. If the URL is not found in Memcache, it then queries MongoDB for the original URL.
-
-Make sure both MongoDB and Memcache Docker containers are properly configured and accessible to ensure the smooth operation of the URL shortener API.
 
 
 ## Installation
 
-To install and run this application, follow these steps:
+There are two approaches to install and run the URL shortener application:
+
+### Approach 1: Using Docker Compose (Recommended)
+
+Docker Compose simplifies the setup process by bundling all components into containers. Here's how to proceed:
+
+1. Ensure Docker is installed on your machine.
+
+2. Clone this repository:
+
+    ```bash
+    git clone git@github.com:iNinad/url_shortener.git
+    ```
+
+3. Navigate to the cloned directory:
+
+    ```bash
+    cd url_shortener
+    ```
+
+4. Run the following command to start the application:
+
+    ```bash
+    docker-compose up --build -d
+    ```
+
+    This command will pull the necessary Docker images, build the application image, and start all containers. The URL shortener application will be accessible at [http://localhost:8000/](http://localhost:8000/).
+
+### Approach 2: Manual Setup
+
+If you prefer manual setup or customization, follow these steps:
 
 1. Clone this repository:
 
-```bash
-git clone git@github.com:iNinad/url_shortener.git
-```
+    ```bash
+    git clone git@github.com:iNinad/url_shortener.git
+    ```
 
-2. Install dependencies:
+2. Navigate to the cloned directory:
 
-```bash
-cd <cloned-directory>
-pip install -r requirements.txt
-```
+    ```bash
+    cd url_shortener
+    ```
 
-3. Start the FastAPI server:
+3. Install dependencies:
 
-```bash
-uvicorn main:app --reload
-```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-The server will start running at `http://127.0.0.1:8000/`.
+4. Start the FastAPI server:
+
+    ```bash
+    uvicorn main:app --reload
+    ```
+
+    The server will start running at [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+Regardless of the approach chosen, the URL shortener application will be up and running, allowing users to shorten, delete, fetch original URLs, and redirect to original URLs effortlessly.
+
 
 ## Endpoints
 
