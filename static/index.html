@@ -13,24 +13,38 @@
             display: block;
         }
 
-        .btn-primary.active {
+        .tab-button.active {
             background-color: #0056b3;
             border-color: #0056b3;
+        }
+
+        .mt-4, .my-4 {
+            margin-top: 0.01rem !important;
+        }
+
+        .btn-outline-secondary:not(:disabled):not(.disabled).active, .btn-outline-secondary:not(:disabled):not(.disabled):active, .show > .btn-outline-secondary.dropdown-toggle {
+            color: #fff;
+            background-color: #234a6c;
+            border-color: #1357c9;
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-5">URL Shortener</h1>
+    <h1 class="mt-5 mb-5">URL Shortener</h1>
 
     <div class="btn-group mt-4" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary tab-button active" data-target="#create">Create Short URL</button>
-        <button type="button" class="btn btn-primary tab-button" data-target="#delete">Delete Short URL</button>
+        <button type="button" class="btn btn-outline-secondary tab-button active" data-toggle="button"
+                aria-pressed="true" data-target="#create">Create Short URL
+        </button>
+        <button type="button" class="btn btn-outline-secondary tab-button" data-toggle="button" aria-pressed="false"
+                data-target="#delete">Delete Short URL
+        </button>
     </div>
     <div id="create" class="tab-content active mt-4">
         <br/>
-        <input type="text" id="url" class="form-control" placeholder="Enter the original url here..">
+        <input type="text" id="url" class="form-control" oninput="validateAndClearUrlError('url', 'shortenUrlError')" placeholder="Enter the original url here..">
         <small id="shortenUrlError" class="text-danger"></small> <!-- Error message placeholder -->
         <br/>
         <button type="button" id="shorten-btn" class="btn btn-primary mt-2">Get Short URL</button>
@@ -39,7 +53,7 @@
 
     <div id="delete" class="tab-content mt-4">
         <br/>
-        <input type="text" id="deleteTextField" class="form-control" placeholder="Enter short URL to delete..">
+        <input type="text" id="deleteTextField" class="form-control" oninput="validateAndClearUrlError('deleteTextField', 'deleteUrlError')" placeholder="Enter short URL to delete..">
         <small id="deleteUrlError" class="text-danger"></small> <!-- Error message placeholder -->
         <br/>
         <button type="button" id="deleteButton" class="btn btn-primary mt-2">Delete Short URL</button>
@@ -48,6 +62,17 @@
 </div>
 
 <script>
+    function validateAndClearUrlError(fieldId, errorFieldId) {
+        const inputUrl = $(`#${fieldId}`).val();
+        // Client-side validation
+        const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+        if (!inputUrl || !urlRegex.test(inputUrl)) {
+            $(`#${errorFieldId}`).text('Please enter a valid URL.');
+        } else {
+            $(`#${errorFieldId}`).empty();
+        }
+    }
+
     $(document).ready(function () {
         $(".tab-button").click(function () {
             $(".tab-button").removeClass("active");
