@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Shortener</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tab-content {
+            display: none;
+            background: aliceblue;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .btn-primary.active {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">URL Shortener</h1>
+
+    <div class="btn-group mt-4" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-primary tab-button active" data-target="#create">Create Short URL</button>
+        <button type="button" class="btn btn-primary tab-button" data-target="#delete">Delete Short URL</button>
+    </div>
+    <div id="create" class="tab-content active mt-4">
+        <br/>
+        <input type="text" id="url" class="form-control" placeholder="Enter the original url here..">
+        <small id="shortenUrlError" class="text-danger"></small> <!-- Error message placeholder -->
+        <br/>
+        <button type="button" id="shorten-btn" class="btn btn-primary mt-2">Get Short URL</button>
+        <div id="createResult" class="mt-4"></div>
+    </div>
+
+    <div id="delete" class="tab-content mt-4">
+        <br/>
+        <input type="text" id="deleteTextField" class="form-control" placeholder="Enter short URL to delete..">
+        <small id="deleteUrlError" class="text-danger"></small> <!-- Error message placeholder -->
+        <br/>
+        <button type="button" id="deleteButton" class="btn btn-primary mt-2">Delete Short URL</button>
+        <div id="deleteResult" class="mt-4"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".tab-button").click(function () {
+            $(".tab-button").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").hide();
+            $($(this).data('target')).show();
+        });
+        $("#deleteButton").click(function (event) {
+            event.preventDefault();
+            var short_url = $("#deleteTextField").val();
+            $.ajax({
+                url: window.location.origin + '/shorten/',
+                type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({short_url: short_url}),
+                success: function (data) {
+                    $('#deleteResult').html('<div class="alert alert-success">' + data.message + '</div>');
+                },
+                error: function (response) {
+                    $('#deleteResult').html('<div class="alert alert-danger">' + response.responseText + '</div>');
+                }
+            });
+        });
+        $('#shorten-btn').click(() => {
+            // Clear previous error messages
+            $('#shortenUrlError').text('');
+            // Retrieve user input
+            const originalUrl = $('#url').val();
+            // Client-side validation
+            const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+            if (!originalUrl || !urlRegex.test(originalUrl)) {
+                $('#shortenUrlError').text('Please enter a valid URL.');
+                return; // Exit function if URL is empty
+            }
+            // Make AJAX request if URL is provided
+            $.ajax({
+                url: window.location.origin + '/shorten/',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'original_url': originalUrl
+                }),
+                success: (data) => {
+                    $('#createResult').html('<div class="alert alert-success">Short URL: <a href="' +
+                        data.short_url + '" target="_blank">' + data.short_url + '</a></div>');
+                },
+                error: (response) => {
+                    $('#createResult').html('<div class="alert alert-danger">' + response.responseText + '</div>');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
