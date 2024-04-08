@@ -54,7 +54,7 @@ Docker Compose simplifies the setup process by bundling all components into cont
     docker-compose up --build -d
     ```
 
-    This command will pull the necessary Docker images, build the application image, and start all containers. The URL shortener application will be accessible at [http://localhost:8000/](http://localhost:8000/).
+    This command will pull the necessary Docker images, build the application image, and start all containers. The URL shortener application will be accessible at [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
 ### Approach 2: Manual Setup
 
@@ -78,7 +78,21 @@ If you prefer manual setup or customization, follow these steps:
     pip install -r requirements.txt
     ```
 
-4. Start the FastAPI server:
+4. Run MongoDB in a docker container
+
+    ```bash
+    docker run -d --name mongodb-container -p 27017:27017 mongo
+    ``` 
+   Ensure that you have Docker installed on your machine before running this command. This will pull the latest MongoDB image from Docker Hub and run it as a container with port `27017` exposed.
+
+5. Run Memcache in a docker container
+
+    ```bash
+    docker run -d --name memcached-container -p 11211:11211 memcached
+    ```
+   Again, ensure that Docker is installed and running before executing this command. This will pull the latest Memcache image from Docker Hub and run it as a container with port `11211` exposed.
+
+6. Start the FastAPI server:
 
     ```bash
     uvicorn main:app --reload
